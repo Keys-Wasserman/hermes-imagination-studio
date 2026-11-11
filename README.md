@@ -21,27 +21,50 @@ back into the chat.
 
 Every frame is a real run: the prompt in Hermes, the plugin tool it called (lit up), and what the Studio made.
 
-| | |
-|---|---|
-| ![Status: /studio calls studio_status](assets/catalog/walkthrough/08-status.jpg) **Status** · `/studio` → `studio_status` | ![Pictures: studio_picture with MOSS-Image](assets/catalog/walkthrough/01-pictures.jpg) **Pictures** · `studio_picture` |
-| ![Clips: studio_clip from a picture, picked up with studio_job](assets/catalog/walkthrough/02-clips.jpg) **Clips with sound** · `studio_clip` + `studio_job` | ![Voices: studio_voice with Fish Audio Drama 3](assets/catalog/walkthrough/03-voices.jpg) **Voices** · `studio_voice` |
-| ![Songs: studio_song with MiniMax Music 3](assets/catalog/walkthrough/04-songs.jpg) **Songs** · `studio_song` | ![Sound effects: studio_sound with Stable Audio Open](assets/catalog/walkthrough/05-sound.jpg) **Sound effects** · `studio_sound` |
-| ![Library: studio_library lists the newest clips](assets/catalog/walkthrough/06-library.jpg) **Library** · `studio_library` | ![Queue: studio_jobs, then studio_cancel](assets/catalog/walkthrough/07-queue.jpg) **Queue** · `studio_jobs` + `studio_cancel` |
+**Status.** `/studio` calls `studio_status`: what this Studio can make, right now.
+
+![Status: /studio calls studio_status](assets/catalog/walkthrough/08-status.jpg)
+
+**Pictures.** `studio_picture`, here with MOSS-Image for exact lettering.
+
+![Pictures: studio_picture with MOSS-Image](assets/catalog/walkthrough/01-pictures.jpg)
+
+**Clips with sound.** `studio_clip` turns a picture into a clip; `studio_job` picks it up when it is ready.
+
+![Clips: studio_clip from a picture, picked up with studio_job](assets/catalog/walkthrough/02-clips.jpg)
+
+**Voices.** `studio_voice`, any voice from a description (Fish Audio Drama 3).
+
+![Voices: studio_voice with Fish Audio Drama 3](assets/catalog/walkthrough/03-voices.jpg)
+
+**Songs.** `studio_song`, lyrics and a style in, a finished song out (MiniMax Music 3).
+
+![Songs: studio_song with MiniMax Music 3](assets/catalog/walkthrough/04-songs.jpg)
+
+**Sound effects.** `studio_sound`, from a few words (Stable Audio Open).
+
+![Sound effects: studio_sound with Stable Audio Open](assets/catalog/walkthrough/05-sound.jpg)
+
+**Library.** `studio_library` finds earlier work and brings it back.
+
+![Library: studio_library lists the newest clips](assets/catalog/walkthrough/06-library.jpg)
+
+**Queue.** `studio_jobs` lists the queue; `studio_cancel` stops a job before it reaches the GPU.
+
+![Queue: studio_jobs, then studio_cancel](assets/catalog/walkthrough/07-queue.jpg)
 
 ![A picture, a voice line and a song made from one Hermes message](assets/catalog/imagination-studio.png)
 
 ## What Hermes gets
 
-| Tool | What it does | Engine in the Studio |
-|---|---|---|
-| `studio_status` | What this Studio can make, its licences, its queue, memory and GPU temperature | |
-| `studio_picture` | Still pictures from a prompt | FLUX 3 Image Klein, Qwen-Image 2.1, MOSS-Image |
-| `studio_clip` | A video clip with sound, from text, from a picture or from a picture prompt | MiniMax H3 / FastH3 |
-| `studio_voice` | A spoken line in a described voice | Fish Audio Drama 3 |
-| `studio_song` | A song from a style and lyrics, or an instrumental | MiniMax Music 3 (YuE2 where installed) |
-| `studio_sound` | A sound effect from words | Stable Audio Open |
-| `studio_job`, `studio_jobs`, `studio_cancel` | Check, pick up and cancel jobs | |
-| `studio_library` | Search earlier work by what is in it, or bring a file back | |
+- `studio_status`: what this Studio can make, its licences, its queue, memory and GPU temperature.
+- `studio_picture`: still pictures from a prompt (FLUX 3 Image Klein, Qwen-Image 2.1, MOSS-Image).
+- `studio_clip`: a video clip with sound, from text, from a picture or from a picture prompt (MiniMax H3 / FastH3).
+- `studio_voice`: a spoken line in a described voice (Fish Audio Drama 3).
+- `studio_song`: a song from a style and lyrics, or an instrumental (MiniMax Music 3, YuE2 where installed).
+- `studio_sound`: a sound effect from words (Stable Audio Open).
+- `studio_job`, `studio_jobs`, `studio_cancel`: check, pick up and cancel jobs.
+- `studio_library`: search earlier work by what is in it, or bring a file back.
 
 Plus a `/studio` command (status, queue, quick jobs, works in Telegram too) and a bundled skill,
 `imagination-studio:imagination-studio`, with prompt advice for each engine.
@@ -76,13 +99,11 @@ and set **Studio access key** on the plugin's page in Desktop (Settings → Plug
 
 ### Settings
 
-| Setting | Default | |
-|---|---|---|
-| `studio_url` | `http://127.0.0.1:7870` | Where the Studio runs |
-| `studio_key` (secret, `IMAGINATION_STUDIO_KEY`) | none | Only for a Studio on another machine |
-| `wait_seconds` | `120` | How long a tool waits for a render (0 to 600) |
-| `download` | `true` | Copy finished files into Hermes so they can be sent as attachments |
-| `max_download_mb` | `500` | The largest file to copy |
+- `studio_url` (default `http://127.0.0.1:7870`): where the Studio runs.
+- `studio_key` (secret, `IMAGINATION_STUDIO_KEY`; default none): only for a Studio on another machine.
+- `wait_seconds` (default `120`): how long a tool waits for a render, 0 to 600.
+- `download` (default `true`): copy finished files into Hermes so they can be sent as attachments.
+- `max_download_mb` (default `500`): the largest file to copy.
 
 ## Tested
 
