@@ -149,7 +149,7 @@ for Stable Audio Open, and the Qwen and FLUX licences for pictures. Check them b
   plugin. [Watch it](https://github.com/Keys-Wasserman/hermes-imagination-studio/releases/download/trailer-v0.1.0/imagination-studio-hermes-plugin-trailer.mp4).
 - **Hermes Agent** by Nous Research.
 
-Built for the Nous Research Hermes Agent Plugin Hackathon, November 2026.
+Built for the Nous Research Hermes Agent Plugin Hackathon, November 2026: [our submission on X](https://x.com/u1tra_instinct/status/2120405597325517117).
 
 ## Licence
 
