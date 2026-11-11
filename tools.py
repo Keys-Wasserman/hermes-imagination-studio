@@ -12,10 +12,14 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from .studio import FINISHED, Studio, StudioError, summary
+import time
+
+from .studio import CONTROL, FINISHED, Studio, StudioError, library_path, safe_name, summary
 
 PLUGIN = "imagination-studio"
 WAIT_MAX = 600
+MAX_FILES = 16           # a job brings back at most this many files
+DOWNLOAD_SECONDS = 300   # and spends at most this long downloading them
 
 # ------------------------------------------------------------------------------------------------------ schemas
 _WAIT = {"type": "integer", "minimum": 0, "maximum": WAIT_MAX,
@@ -133,11 +137,12 @@ class Settings:
         return default if value in (None, "") else value
 
     def studio(self) -> Studio:
+        note = ""
         try:
             key = self._get_secret("IMAGINATION_STUDIO_KEY") or ""
-        except Exception:  # noqa: BLE001 - no secret route (a test harness): no key
-            key = ""
-        return Studio(str(self.get("studio_url", "http://127.0.0.1:7870")), key)
+        except Exception as error:  # noqa: BLE001 - say why the key is missing rather than failing the tool
+            key, note = "", f"Hermes could not read the IMAGINATION_STUDIO_KEY secret: {type(error).__name__}"
+        return Studio(str(self.get("studio_url", "http://127.0.0.1:7870")), key, key_note=note)
 
     def wait_seconds(self, args: dict) -> float:
         given = args.get("wait_seconds")
@@ -168,8 +173,38 @@ def _error(message: str, **more) -> str:
     return json.dumps({"error": message, **more}, ensure_ascii=False)
 
 
+_NUMBERS = {"count": (1, 12), "width": (64, 4096), "height": (64, 4096), "seconds": (1, 300), "seed": (-1, 2**32 - 1)}
+_TEXT_MAX = 6000
+
+
 def _pick(args: dict, keys: tuple) -> dict:
-    return {k: args[k] for k in keys if args.get(k) not in (None, "", [])}
+    """The given arguments, with numbers checked against sane ranges and text kept to a sane length."""
+
+    out = {}
+    for k in keys:
+        v = args.get(k)
+        if v in (None, "", []):
+            continue
+        if k in _NUMBERS:
+            lo, hi = _NUMBERS[k]
+            try:
+                n = float(v)
+            except (TypeError, ValueError):
+                raise StudioError(f"{k} must be a number, not {str(v)[:40]!r}") from None
+            if not lo <= n <= hi:
+                raise StudioError(f"{k} must be between {lo} and {hi}")
+            v = int(n) if k != "seconds" else (int(n) if n == int(n) else n)
+        elif isinstance(v, str):
+            v = v[:_TEXT_MAX]
+        elif not isinstance(v, (int, float, bool)):
+            raise StudioError(f"{k} must be text or a number")
+        out[k] = v
+    return out
+
+
+def _download_on(settings: "Settings") -> bool:
+    value = settings.get("download", True)
+    return not (value is False or str(value).strip().lower() in ("false", "0", "no", "off"))
 
 
 def finish(settings: Settings, studio: Studio, job: dict, wait: float) -> str:
@@ -181,13 +216,21 @@ def finish(settings: Settings, studio: Studio, job: dict, wait: float) -> str:
     status = job.get("status")
     if status == "done":
         files, skipped = [], []
-        if settings.get("download", True) not in (False, "false", "False", 0):
-            folder = settings.outputs() / str(job["id"])
-            for path in job.get("outputs") or []:
+        if _download_on(settings):
+            base = settings.outputs().resolve()
+            folder = (base / safe_name(job.get("id"), "job")).resolve()
+            if folder.parent != base:  # the job id comes from the Studio: it never chooses where files go
+                raise StudioError("refusing a job id that points outside the plugin's folder")
+            outputs = [p for p in (job.get("outputs") or []) if isinstance(p, str)]
+            deadline = time.monotonic() + DOWNLOAD_SECONDS
+            for path in outputs[:MAX_FILES]:
                 try:
-                    files.append(str(studio.download(str(path), folder, settings.download_limit())))
+                    files.append(str(studio.download(path, folder, settings.download_limit(), deadline)))
                 except StudioError as error:
-                    skipped.append(f"{path}: {error}")
+                    skipped.append(f"{str(path)[:120]}: {error}")
+            if len(outputs) > MAX_FILES:
+                skipped.append(f"{len(outputs) - MAX_FILES} more files not copied (at most {MAX_FILES} per job)")
+        files = [f for f in files if not CONTROL.search(f)]  # one MEDIA line per file, never more
         if files:
             out["files"] = files
             out["media_tag"] = "\n".join(f"MEDIA:{f}" for f in files)
@@ -267,7 +310,7 @@ def studio_clip(settings: Settings, args: dict) -> str:
     else:
         kind = "video"
         if args.get("first_frame"):
-            params["image"] = args["first_frame"]
+            params["image"] = library_path(args["first_frame"])
     if "quality" not in params:
         try:
             if not studio.state().get("turbo"):
@@ -314,13 +357,12 @@ def studio_job(settings: Settings, args: dict) -> str:
     if not job_id:
         return _error("job_id is needed")
     studio = settings.studio()
-    wait = settings.wait_seconds({"wait_seconds": args.get("wait_seconds", 0)})
-    return finish(settings, studio, studio.job(job_id), wait)
+    return finish(settings, studio, studio.job(job_id), settings.wait_seconds(args))
 
 
 @_guard
 def studio_jobs(settings: Settings, args: dict) -> str:
-    limit = max(1, min(int(args.get("limit") or 10), 50))
+    limit = max(1, min(int(args["limit"]) if str(args.get("limit") or "").isdigit() else 10, 50))
     jobs = settings.studio().jobs()
     return _ok({"jobs": [summary(j) for j in jobs[:limit]]})
 
@@ -337,11 +379,12 @@ def studio_cancel(settings: Settings, args: dict) -> str:
 def studio_library(settings: Settings, args: dict) -> str:
     studio = settings.studio()
     if args.get("fetch"):
-        path = str(args["fetch"])
-        file = studio.download(path, settings.outputs() / "library", settings.download_limit())
+        path = library_path(args["fetch"])
+        file = studio.download(path, settings.outputs() / "library", settings.download_limit(),
+                               time.monotonic() + DOWNLOAD_SECONDS)
         return _ok({"path": path, "files": [str(file)], "media_tag": f"MEDIA:{file}",
                     "note": "Include media_tag's MEDIA line in your reply to deliver the file."})
-    limit = max(1, min(int(args.get("limit") or 8), 30))
+    limit = max(1, min(int(args["limit"]) if str(args.get("limit") or "").isdigit() else 8, 30))
     query = str(args.get("query") or "").strip()
     items = studio.search(query) if query else studio.library()
     if args.get("kind"):

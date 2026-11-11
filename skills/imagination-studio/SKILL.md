@@ -19,6 +19,14 @@ a time in its own queue, checks memory before it starts, and pauses GPU work unt
 5. **Chain the steps.** A picture's Library path (from the job's `outputs`, e.g. `scouts/<job>/scout_s1.png`) is the
    `first_frame` of a clip. `studio_library` finds earlier work by what is in it.
 
+## When the Studio is not there
+
+If a tool says the Studio does not answer, the person probably has not installed it yet, or it is not running. Tell
+them plainly: Imagination Studio is free and open source; they download it from
+https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman, run the one-shot setup for their machine (NVIDIA DGX
+Spark, RTX PCs, Windows on ARM or Apple Silicon Macs) and start it. If it runs on another computer, they set
+`studio_url` and the Studio access key in this plugin's settings. Do not retry in a loop.
+
 ## Prompts that work
 
 - **Pictures:** subject, place, light, lens and style in one or two sentences ("a lighthouse keeper on a stormy cliff

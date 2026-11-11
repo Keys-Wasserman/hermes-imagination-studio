@@ -1,5 +1,5 @@
 name: imagination-studio
-version: "0.1.0"
+version: "0.1.1"
 manifest_version: 2
 api_version: 1
 description: "Make pictures, video clips with sound, voice lines, songs and sound effects on your own machine with Imagination Studio (by keys + Wasserman): FLUX 3 Klein / Qwen-Image, MiniMax H3 / FastH3, Fish Audio Drama 3, MiniMax Music 3 and Stable Audio Open, rendered in the Studio's own queue and delivered to your chat."

@@ -17,6 +17,10 @@ AI film studio that runs on NVIDIA DGX Spark, RTX PCs, Windows on ARM and Apple 
 Hermes calls the Studio's tools, the Studio renders everything locally in its own queue, and the files come straight
 back into the chat.
 
+> **You need Imagination Studio too.** This plugin is the bridge; the Studio does the rendering. It's free and open
+> source: **[download Imagination Studio](https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman)** and run its one-shot setup for your machine (NVIDIA DGX Spark, RTX
+> PCs, Windows on ARM or Apple Silicon Macs). If Hermes can't reach a Studio, the plugin says so and points here.
+
 ![You ask Hermes, the plugin's tool runs, the Studio's output comes back: a picture, then a clip with sound made from a picture](assets/demo/walkthrough.gif)
 
 ## See each tool at work
@@ -76,8 +80,10 @@ Long renders don't block the chat: a tool waits up to `wait_seconds` (default 12
 
 ## Install
 
-1. Install and start [Imagination Studio](https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman) (its
-   one-shot setup for your machine). It serves on `http://127.0.0.1:7870`.
+1. **Get Imagination Studio** (free, open source): download it from
+   [github.com/drowzeys/Imagination-Studio-by-keys-Wasserman](https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman), run the one-shot setup for your machine (the Studio's
+   README has the command for DGX Spark, RTX PCs, Windows on ARM and Apple Silicon Macs), and start it. It serves on
+   `http://127.0.0.1:7870`.
 2. Install the plugin:
 
    ```bash
@@ -114,20 +120,24 @@ and set **Studio access key** on the plugin's page in Desktop (Settings → Plug
 - **Mac Studio (Apple Silicon, Metal/MLX)**: Hermes on the Spark against the Mac's Studio over the network with its
   access key. A picture (FLUX3-K Fast, 14.6 s), a voice line (Drama 3, 12.3 s) and a 30 s instrumental
   (MiniMax Music 3, 21.9 s) from one message, all delivered; then a clip made from the picture.
-- `hermes plugins validate` and `hermes plugins doctor --ci` pass (security scan: safe). 14 unit tests run against a
+- `hermes plugins validate` and `hermes plugins doctor --ci` pass (security scan: safe). 39 unit tests (including regression tests for hostile Studio responses: path traversal, forged MEDIA lines, redirects, oversized and slow downloads) run against a
   fake Studio: `cd tests && python -m pytest`.
 
 ## What it does on your machine (disclosure)
 
 - **Network:** HTTP calls to the Studio at `studio_url` only (by default this computer). No other service, no
-  telemetry.
+  telemetry. Redirects are never followed, so the access key only ever goes to `studio_url`, and the key is sent over
+  plain http only to this computer or a private network address (an internet address needs `https://`).
 - **Files:** finished files are copied from the Studio into `HERMES_HOME/plugin-data/imagination-studio/outputs/`
-  (up to `max_download_mb` each). Nothing is deleted automatically; remove the folder to clear it.
+  (up to `max_download_mb` each, at most 16 per job). File and folder names are sanitised, only plain relative Library
+  paths are accepted, and nothing is written outside that folder. Nothing is deleted automatically; remove the folder to clear it.
 - **Credentials:** the optional Studio key is read with Hermes's `get_secret`; the plugin stores none.
 - **Compute:** every render runs in the Studio's own queue, which checks memory before each job, runs one heavy job
   at a time and pauses GPU work until the machine has cooled. The plugin never loads a model, starts a process or
   runs a shell command.
-- **Background work:** none. A tool call blocks for at most `wait_seconds`.
+- **Background work:** none (no threads, no subprocesses). A tool call waits at most `wait_seconds` for a render and
+  stops copying files after 300 s. Each network read times out after 60 to 120 s; a Studio that deliberately trickles
+  bytes could still hold a call longer, so point `studio_url` only at a Studio you run or trust.
 
 ## Licences of what you make
 

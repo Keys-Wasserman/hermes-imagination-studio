@@ -20,7 +20,8 @@ USAGE = ("/studio — Imagination Studio\n"
          "  /studio picture <prompt>   /studio song <style>   /studio sound <words>   /studio voice <line>\n"
          "                          queue it and return at once (then /studio get <id>)\n"
          "  /studio get <id>        a job's status, and its files once done\n"
-         "  /studio cancel <id>     cancel a job")
+         "  /studio cancel <id>     cancel a job\n"
+         "Get Imagination Studio (free, open source): https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman")
 
 
 def _secret(name: str) -> str:
