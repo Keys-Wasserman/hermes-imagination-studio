@@ -15,6 +15,19 @@ AI film studio that runs on NVIDIA DGX Spark, RTX PCs, Windows on ARM and Apple 
 Hermes calls the Studio's tools, the Studio renders everything locally in its own queue, and the files come straight
 back into the chat.
 
+![You ask Hermes, the plugin's tool runs, the Studio's output comes back: a poster, then a clip with sound made from a picture](assets/demo/walkthrough.gif)
+
+## See each tool at work
+
+Every frame is a real run: the prompt in Hermes, the plugin tool it called (lit up), and what the Studio made.
+
+| | |
+|---|---|
+| ![Status: /studio calls studio_status](assets/catalog/walkthrough/08-status.jpg) **Status** · `/studio` → `studio_status` | ![Pictures: studio_picture with MOSS-Image](assets/catalog/walkthrough/01-pictures.jpg) **Pictures** · `studio_picture` |
+| ![Clips: studio_clip from a picture, picked up with studio_job](assets/catalog/walkthrough/02-clips.jpg) **Clips with sound** · `studio_clip` + `studio_job` | ![Voices: studio_voice with Fish Audio Drama 3](assets/catalog/walkthrough/03-voices.jpg) **Voices** · `studio_voice` |
+| ![Songs: studio_song with MiniMax Music 3](assets/catalog/walkthrough/04-songs.jpg) **Songs** · `studio_song` | ![Sound effects: studio_sound with Stable Audio Open](assets/catalog/walkthrough/05-sound.jpg) **Sound effects** · `studio_sound` |
+| ![Library: studio_library lists the newest clips](assets/catalog/walkthrough/06-library.jpg) **Library** · `studio_library` | ![Queue: studio_jobs, then studio_cancel](assets/catalog/walkthrough/07-queue.jpg) **Queue** · `studio_jobs` + `studio_cancel` |
+
 ![A picture, a voice line and a song made from one Hermes message](assets/catalog/imagination-studio.png)
 
 ## What Hermes gets
