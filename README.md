@@ -1,5 +1,7 @@
 # Imagination Studio for Hermes
 
+![Imagination Studio's home page: the Studio Hermes drives](assets/catalog/walkthrough/00-studio-home.jpg)
+
 **One plugin, a whole film studio.** Install it and Hermes can direct a complete generative studio on your own
 machine: pictures, video clips with sound, voices, songs, sound effects and music videos. Free and open source
 (Apache 2.0), like the Studio itself. No cloud, no credits, no subscription.
@@ -15,7 +17,7 @@ AI film studio that runs on NVIDIA DGX Spark, RTX PCs, Windows on ARM and Apple 
 Hermes calls the Studio's tools, the Studio renders everything locally in its own queue, and the files come straight
 back into the chat.
 
-![You ask Hermes, the plugin's tool runs, the Studio's output comes back: a poster, then a clip with sound made from a picture](assets/demo/walkthrough.gif)
+![You ask Hermes, the plugin's tool runs, the Studio's output comes back: a picture, then a clip with sound made from a picture](assets/demo/walkthrough.gif)
 
 ## See each tool at work
 
@@ -25,7 +27,7 @@ Every frame is a real run: the prompt in Hermes, the plugin tool it called (lit 
 
 ![Status: /studio calls studio_status](assets/catalog/walkthrough/08-status.jpg)
 
-**Pictures.** `studio_picture`, here with MOSS-Image for exact lettering.
+**Pictures.** `studio_picture`, here with Qwen-Image (FLUX 3 Klein and MOSS-Image are there too).
 
 ![Pictures: studio_picture with MOSS-Image](assets/catalog/walkthrough/01-pictures.jpg)
 
