@@ -144,6 +144,9 @@ for Stable Audio Open, and the Qwen and FLUX licences for pictures. Check them b
   (Stable Audio Open), Ho Kei Cheng and the MMAudio authors, Multimodal Art Projection (YuE2), and Ash Hart and the
   TensorFold contributors (the native runtime). The Studio's
   [CREDITS.md](https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman/blob/main/CREDITS.md) lists everyone.
+- **The trailer:** key art, title design, Studio footage and music ("Grid Runner" and "The Miracle") by Sam Wasserman /
+  Wasserman Productions, used with permission. Every voice, sound effect and Studio clip in it was made through this
+  plugin. [Watch it](https://github.com/Keys-Wasserman/hermes-imagination-studio/releases/download/trailer-v0.1.0/imagination-studio-hermes-plugin-trailer.mp4).
 - **Hermes Agent** by Nous Research.
 
 Built for the Nous Research Hermes Agent Plugin Hackathon, November 2026.
