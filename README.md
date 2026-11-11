@@ -1,5 +1,9 @@
 # Imagination Studio for Hermes
 
+**One plugin, a whole film studio.** Install it and Hermes can direct a complete generative studio on your own
+machine: pictures, video clips with sound, voices, songs, sound effects and music videos. Free and open source
+(Apache 2.0), like the Studio itself. No cloud, no credits, no subscription.
+
 Make pictures, video clips with sound, voice lines, songs and sound effects **on your own machine**, from any Hermes
 chat: the terminal, Desktop, or Telegram and the other messaging apps. The plugin connects Hermes Agent to
 [Imagination Studio](https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman) by keys + Wasserman, a local
