@@ -1,0 +1,47 @@
+name: imagination-studio
+version: "0.1.0"
+manifest_version: 2
+api_version: 1
+description: "Make pictures, video clips with sound, voice lines, songs and sound effects on your own machine with Imagination Studio (by keys + Wasserman): FLUX 3 Klein / Qwen-Image, MiniMax H3 / FastH3, Fish Audio Drama 3, MiniMax Music 3 and Stable Audio Open, rendered in the Studio's own queue and delivered to your chat."
+author: "keys (drowzeys) and Sam Wasserman (Wasserman Productions)"
+license: Apache-2.0
+homepage: https://github.com/Keys-Wasserman/hermes-imagination-studio
+tags: [media, video, image, music, voice, audio, local, creative]
+requires_hermes: ">=0.22.7"
+provides_tools:
+  - studio_status
+  - studio_picture
+  - studio_clip
+  - studio_voice
+  - studio_song
+  - studio_sound
+  - studio_job
+  - studio_jobs
+  - studio_cancel
+  - studio_library
+provides_hooks: []
+config_schema:
+  studio_url:
+    type: str
+    default: "http://127.0.0.1:7870"
+    label: "Studio address"
+    description: "Where Imagination Studio runs. The default is this computer; another machine on your network or tailnet works too (then set the access key)."
+  studio_key:
+    type: secret
+    env: IMAGINATION_STUDIO_KEY
+    label: "Studio access key"
+    description: "Only for a Studio on another machine: the key from its Settings page (or ~/ImaginationStudio/access-key there). Not needed on the same computer."
+  wait_seconds:
+    type: int
+    default: 120
+    label: "Wait for results (seconds)"
+    description: "How long a tool waits for a render before handing back the job id (0 to 600). Clips and songs often take longer; studio_job picks them up."
+  download:
+    type: bool
+    default: true
+    label: "Bring finished files into the chat"
+    description: "Copy finished files from the Studio into Hermes's plugin data folder so they can be sent as attachments."
+  max_download_mb:
+    type: int
+    default: 500
+    label: "Largest file to bring back (MB)"
